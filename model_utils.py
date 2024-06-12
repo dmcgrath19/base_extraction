@@ -40,6 +40,29 @@ def calculate_perplexity_sliding(input_sentence, model, tokenizer, device, windo
             min_perplexity = min(min_perplexity, torch.exp(output.loss))
     return min_perplexity
 
+def parse_lang(path):
+    file_content=""
+    chunk_size = 10 * 1024 * 1024  # 10 MB
+
+    try:
+        # Open the file in read mode
+        with open(path, 'r', encoding='utf-8') as file:
+            while True:
+                # Read the next chunk from the file
+                chunk = file.read(chunk_size)
+                if not chunk:
+                    break  # End of file reached
+                # Append the chunk to the file content string
+                file_content += chunk
+        print("File read successfully.")
+    except FileNotFoundError:
+        print(f"The file at {path} was not found.")
+    except IOError as e:
+        print(f"An error occurred while reading the file at {path}: {e}")
+    
+    return file_content
+
+
 def parse_pilecorpus(path):
     """
     Quick and ugly parsing of a WET file.
