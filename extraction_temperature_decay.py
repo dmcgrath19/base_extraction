@@ -141,11 +141,11 @@ def print_best_to_file(outfile, metric, samples, metric_name, name1, scores1, na
 def main(args):
     # Load models
     print("Loading models...")
-    TOKENIZER_GPT2 = load_tokenizer_for_causal_lm("gpt2")
-    MODEL_GPT2 = load_model_for_causal_lm("gpt2", device)
-    # MODEL_GPT2_MEDIUM = load_model_for_causal_lm("gpt2-medium", device)
-    MODEL_GPT2_XL = load_model_for_causal_lm("gpt2-xl", device)
-    print("GPT2 and GPT2-XL models loaded!")
+    tokeniser = load_tokenizer_for_causal_lm(args.model2)
+    small_model = load_model_for_causal_lm(args.model2, device)
+    # MODEL_GPT2_MEDIUM = load_model_for_causal_lm(gpt2-medium", device)
+    xl_model = load_model_for_causal_lm(args.model1, device)
+    print("small and XL models loaded!")
 
     # number of tokens to generate (from paper)
     seq_len = 256
@@ -166,11 +166,11 @@ def main(args):
     with tqdm(total=new_tot) as pbar:
         for batch in range(num_batches):
             # Create empty prompts
-            prompts = [TOKENIZER_GPT2.eos_token] * args.batch_size
-            inputs = TOKENIZER_GPT2(prompts, return_tensors="pt", padding=True).to(device)
+            prompts = [tokeniser.eos_token] * args.batch_size
+            inputs = tokeniser(prompts, return_tensors="pt", padding=True).to(device)
 
             # Batched sequence generation
-            generated_sequences = MODEL_GPT2_XL.generate(
+            generated_sequences = xl_model.generate(
                 input_ids = inputs.input_ids,
                 attention_mask = inputs.attention_mask,
                 max_length = seq_len,
@@ -179,30 +179,30 @@ def main(args):
                 renormalize_logits = True
             )
 
-            generated_texts = TOKENIZER_GPT2.batch_decode(generated_sequences, skip_special_tokens=True)
+            generated_texts = tokeniser.batch_decode(generated_sequences, skip_special_tokens=True)
 
             for text in generated_texts:
-                # Calculate perplexity of GPT-XL, GPT2-Small and GPT2-Medium on each generated text
-                perplexity_gpt2_xl = calculate_perplexity(text, MODEL_GPT2_XL, TOKENIZER_GPT2, device) 
-                perplexity_gpt2 = calculate_perplexity(text, MODEL_GPT2, TOKENIZER_GPT2, device) 
-                # perplexity_gpt2_medium = calculate_perplexity(text, MODEL_GPT2_MEDIUM, TOKENIZER_GPT2, device) 
+                # Calculate perplexity of XL, Small and Medium on each generated text
+                perplexity_xl = calculate_perplexity(text, xl_model, tokeniser, device) 
+                perplexity_small = calculate_perplexity(text, small_model, tokeniser, device) 
+                # perplexity_medium = calculate_perplexity(text, MODEL_MEDIUM, tokeniser, device) 
 
-                # Calculate perplexity of GPT-XL on each lower-cased text
-                perplexity_gpt2_xl_lower = calculate_perplexity(text.lower(), MODEL_GPT2_XL, TOKENIZER_GPT2, device) 
+                # Calculate perplexity of XL on each lower-cased text
+                perplexity_xl_lower = calculate_perplexity(text.lower(), xl_model, tokeniser, device) 
 
                 # Calculate Z-lib entropy of sample
                 zlib_entropy = len(zlib.compress(bytes(text, 'utf-8')))
 
                 # Calculate minimum perplexity of GPT2-XL across any sliding window of 50 tokens
-                perplexity_gpt2_xl_window = calculate_perplexity(text.lower(), MODEL_GPT2_XL, TOKENIZER_GPT2, device)
+                perplexity_xl_window = calculate_perplexity(text.lower(), xl_model, tokeniser, device)
 
                 generated_samples.append(text)
-                scores["XL"].append(perplexity_gpt2_xl.cpu())
-                scores["SMALL"].append(perplexity_gpt2.cpu())
+                scores["XL"].append(perplexity_xl.cpu())
+                scores["SMALL"].append(perplexity_small.cpu())
                 # scores["MEDIUM"].append(perplexity_gpt2_medium.cpu())
                 scores["ZLIB"].append(zlib_entropy)
-                scores["LOWER"].append(perplexity_gpt2_xl_lower.cpu())
-                scores["WINDOW"].append(perplexity_gpt2_xl_window.cpu())
+                scores["LOWER"].append(perplexity_xl_lower.cpu())
+                scores["WINDOW"].append(perplexity_xl_window.cpu())
 
             pbar.update(args.batch_size)
 
@@ -235,7 +235,7 @@ def main(args):
     # Sort by perplexity of GPT2-XL
     metric = np.log(scores["XL"])
     print(f"======== top samples by XL perplexity: ========")
-    print_best(metric, generated_samples_clean, "Sort by perplexity of GPT2-XL", "PPL-XL", scores["XL"], lower_better=True)
+    print_best(metric, generated_samples_clean, "Sort by perplexity of XL", "PPL-XL", scores["XL"], lower_better=True)
     print_best_to_file(args.outfile, metric, generated_samples_clean, "Sort by perplexity of GPT2-XL", "PPL-XL", scores["XL"], lower_better=True)
     print()
     print()
@@ -284,6 +284,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--N', default=20, type=int, help='Number of samples to generate')
     parser.add_argument('--batch_size', default=6, type=int, help='Batch size')
+    parser.add_argument('--model1', type=str, required=True, help="Hugging Face model name for the large, first model")
+    parser.add_argument('--model2', type=str, required=True, help="Hugging Face model name for the small, second model")
     parser.add_argument('--outfile', type=str, help='Output file to log top samples based on each metric')
 
     args = parser.parse_args()
