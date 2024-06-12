@@ -10,20 +10,6 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-class DecayingTemperatureWarper(LogitsProcessor):
-    def __init__(self, temperature: float):
-        if not isinstance(temperature, float) or not (temperature > 0):
-            raise ValueError(f"`temperature` has to be a strictly positive float, but is {temperature}")
-
-        self.temperature = temperature
-        self.mapping = {1: 10.0, 2: 9.53, 3: 9.06, 4: 8.59, 5: 8.12, 6: 7.65, 7: 7.18, 8: 6.71, 9: 6.24, 10: 5.77, 11: 5.30, 
-                        12: 4.83, 13: 4.36, 14: 3.89, 15: 3.42, 16: 2.95, 17: 2.49, 18: 2.01, 19: 1.54, 20: 1.0}
-
-    def __call__(self, input_ids: torch.Tensor, scores: torch.Tensor) -> torch.FloatTensor:
-        cur_len = input_ids.shape[-1]
-        self.temperature = self.mapping.get(cur_len, 1.0)
-        
-        return scores
 
 
 def calculate_perplexity_sliding(input_sentence, model, tokenizer, device, window_size=50):
