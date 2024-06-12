@@ -7,7 +7,7 @@ import csv
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from tqdm import tqdm
-from model_utils import calculate_perplexity, print_best, parse_pilecorpus, device
+from model_utils import DecayingTemperatureWarper, calculate_perplexity, calculate_perplexity_sliding, print_best, parse_pilecorpus, device
 
 def main(args):
     print(f"Using device: {device}")
