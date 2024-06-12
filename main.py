@@ -17,8 +17,14 @@ def main(args):
     #change to parse_lang to use a different txt dataset.
     ds= parse_pilecorpus(path)
     print("Length:", len(ds))
-   
+    
     seq_len = 256
+
+    logits_warper = LogitsProcessorList(
+            [
+                DecayingTemperatureWarper(10.0)
+            ]
+        )
     top_k = 40
     
     print("Loading models...")
@@ -34,7 +40,7 @@ def main(args):
 
     samples = []
     prompts_list = []
-    scores = {"XL": [], "S": [], "Lower": [], "zlib": []}
+    scores = {"XL": [], "S": [], "Lower": [], "zlib": [], "window": []}
 
     num_batches = int(np.ceil(args.N / args.batch_size))
     with tqdm(total=args.N) as pbar:
@@ -86,6 +92,7 @@ def main(args):
                 scores["S"].append(p2)
                 scores["Lower"].append(p_lower)
                 scores["zlib"].append(zlib_entropy)
+                scores["WINDOW"].append(perplexity_gpt2_xl_window.cpu())
 
             pbar.update(args.batch_size)
     print("*"*100)
