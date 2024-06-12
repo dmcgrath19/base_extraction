@@ -151,13 +151,13 @@ def main(args):
     # MODEL_GPT2_MEDIUM = load_model_for_causal_lm("gpt2-medium", device)
     MODEL_GPT2_XL = load_model_for_causal_lm("gpt2-xl", device)
     print("GPT2 and GPT2-XL models loaded!")
-
+    
     print("Loading commoncrawl...")
     cc_data = parse_commoncrawl(args.wet_file)
 
     # number of tokens to generate (from paper)
     seq_len = 256
-
+    
     # k in top_k sampling (from paper)
     top_k = 40
 
@@ -208,7 +208,7 @@ def main(args):
                 perplexity_gpt2_xl = calculate_perplexity(text, MODEL_GPT2_XL, TOKENIZER_GPT2, device) 
                 perplexity_gpt2 = calculate_perplexity(text, MODEL_GPT2, TOKENIZER_GPT2, device) 
                 # perplexity_gpt2_medium = calculate_perplexity(text, MODEL_GPT2_MEDIUM, TOKENIZER_GPT2, device) 
-
+   
                 # Calculate perplexity of GPT-XL on each lower-cased text
                 perplexity_gpt2_xl_lower = calculate_perplexity(text.lower(), MODEL_GPT2_XL, TOKENIZER_GPT2, device) 
 
