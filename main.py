@@ -7,18 +7,20 @@ import csv
 from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from tqdm import tqdm
-from model_utils import DecayingTemperatureWarper, calculate_perplexity, calculate_perplexity_sliding, print_best, parse_pilecorpus, device
+from transformers.generation_logits_process import LogitsProcessor, LogitsProcessorList
+from model_utils import DecayingTemperatureWarper, calculate_perplexity, calculate_perplexity_sliding, print_best, parse_pilecorpus, parse_lang, device
 
 def main(args):
     print(f"Using device: {device}")
     print("Loading dataset...")
     path="monology/pile-uncopyrighted"
+    #change to parse_lang to use a different txt dataset.
     ds= parse_pilecorpus(path)
     print("Length:", len(ds))
    
     seq_len = 256
     top_k = 40
-
+    
     print("Loading models...")
     
     tokenizer = AutoTokenizer.from_pretrained(args.model1)
