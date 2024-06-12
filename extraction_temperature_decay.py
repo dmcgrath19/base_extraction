@@ -165,7 +165,7 @@ def main(args):
 
     generated_samples = []
     scores = defaultdict(list)
-
+    prompts_list = []
     with tqdm(total=new_tot) as pbar:
         for batch in range(num_batches):
             # Create empty prompts
@@ -189,7 +189,7 @@ def main(args):
             prompts = tokeniser.batch_decode(inputs['input_ids'], skip_special_tokens=True)
             # prompts = [tokeniser.eos_token] * args.batch_size
             # inputs = tokeniser(prompts, return_tensors="pt", padding=True).to(device)
-
+            
             # Batched sequence generation
             generated_sequences = xl_model.generate(
                 input_ids = inputs.input_ids,
@@ -224,7 +224,7 @@ def main(args):
                 scores["ZLIB"].append(zlib_entropy)
                 scores["LOWER"].append(perplexity_xl_lower.cpu())
                 scores["WINDOW"].append(perplexity_xl_window.cpu())
-
+                prompts_list.append(prompts)
             pbar.update(args.batch_size)
 
     print(len(scores["XL"]))
