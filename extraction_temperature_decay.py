@@ -169,8 +169,26 @@ def main(args):
     with tqdm(total=new_tot) as pbar:
         for batch in range(num_batches):
             # Create empty prompts
-            prompts = [tokeniser.eos_token] * args.batch_size
-            inputs = tokeniser(prompts, return_tensors="pt", padding=True).to(device)
+            input_len = 10
+            input_ids = []
+            attention_mask = []
+            while len(input_ids) < args.batch_size:
+                # Sample random text from the Pile corpus
+                r = np.random.randint(0, len(ds))
+                # prompt = " ".join(ds[r].split()[:100])
+                prompt = " ".join(ds[r:r+100].split(" ")[1:-1])
+                # Tokenize the prompt ensuring consistent input lengths
+                inputs = tokeniser(prompt, return_tensors="pt", max_length=input_len, truncation=True, padding="max_length")
+                if len(inputs['input_ids'][0]) == input_len:
+                    input_ids.append(inputs['input_ids'][0])
+                    attention_mask.append(inputs['attention_mask'][0])
+
+            inputs = {'input_ids': torch.stack(input_ids), 
+                      'attention_mask': torch.stack(attention_mask)}
+            
+            prompts = tokeniser.batch_decode(inputs['input_ids'], skip_special_tokens=True)
+            # prompts = [tokeniser.eos_token] * args.batch_size
+            # inputs = tokeniser(prompts, return_tensors="pt", padding=True).to(device)
 
             # Batched sequence generation
             generated_sequences = xl_model.generate(
