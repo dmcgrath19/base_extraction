@@ -19,7 +19,7 @@ cd /exports/eddie/scratch/UUN/
 conda create -n extract python=3.9 
 conda activate extract
 
-git clone https://github.com/dmcgrath19/base_extraction.git
+#git clone https://github.com/dmcgrath19/base_extraction.git
 
 cd base_extraction
 
