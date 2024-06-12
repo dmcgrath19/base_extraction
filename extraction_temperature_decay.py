@@ -7,6 +7,7 @@ import zlib
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.generation_logits_process import LogitsProcessor, LogitsProcessorList
 from collections import defaultdict
+from model_utils import parse_pilecorpus, parse_lang
 from tqdm import tqdm
 from pprint import pprint
 import pandas as pd
@@ -17,6 +18,7 @@ else:
     device = torch.device('cpu')
 
 LOW_MEMORY = True
+
 
 # Custom LogitProcessor to decay Temperature from 10.0 to 1.0 over the first 20 tokens
 # and 1.0 for subsequent tokens 
@@ -146,7 +148,8 @@ def main(args):
     # MODEL_GPT2_MEDIUM = load_model_for_causal_lm(gpt2-medium", device)
     xl_model = load_model_for_causal_lm(args.model1, device)
     print("small and XL models loaded!")
-
+    ds= parse_pilecorpus(path)
+    print("Length:", len(ds))
     # number of tokens to generate (from paper)
     seq_len = 256
 
@@ -286,6 +289,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=6, type=int, help='Batch size')
     parser.add_argument('--model1', type=str, required=True, help="Hugging Face model name for the large, first model")
     parser.add_argument('--model2', type=str, required=True, help="Hugging Face model name for the small, second model")
+    parser.add_argument('--corpus-path', type=str, required=True, help="Path to the corpus dataset")
     parser.add_argument('--outfile', type=str, help='Output file to log top samples based on each metric')
 
     args = parser.parse_args()
