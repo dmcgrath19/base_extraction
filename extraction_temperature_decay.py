@@ -89,7 +89,7 @@ def calculate_perplexity_sliding(input_sentence, model, tokenizer, device, windo
             min_perplexity = min(min_perplexity, torch.exp(output.loss))
     return min_perplexity
 
-def print_best(metric, samples, metric_name, name1, scores1, name2=None, scores2=None, lower_better=True, n=10):
+def print_best(metric, samples, metric_name, name1, scores1, name2=None, scores2=None, lower_better=True, n=1000):
     """
     Print the top-n best samples according to the given metric
     """
@@ -110,7 +110,7 @@ def print_best(metric, samples, metric_name, name1, scores1, name2=None, scores2
         print()
         print()
 
-def print_best_to_file(outfile, metric, samples, metric_name, name1, scores1, name2=None, scores2=None, lower_better=True, n=100):
+def print_best_to_file(outfile, metric, samples, metric_name, name1, scores1, name2=None, scores2=None, lower_better=True, n=1000):
     """
     Print the top-n best samples according to the given metric to a file
     """
