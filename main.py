@@ -250,7 +250,7 @@ def main(args):
     scores["ZLIB"] = scores["ZLIB"][idxs_mask]
     scores["LOWER"] = scores["LOWER"][idxs_mask]
     scores["WINDOW"] = scores["WINDOW"][idxs_mask]
-
+    
     assert len(generated_samples_clean) == len(scores["XL"])
     assert len(scores["SMALL"]) == len(scores["XL"])
     print("Num duplicates:", len(generated_samples) - len(generated_samples_clean))
