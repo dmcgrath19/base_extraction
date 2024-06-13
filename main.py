@@ -7,7 +7,7 @@ import zlib
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.generation_logits_process import LogitsProcessor, LogitsProcessorList
 from collections import defaultdict
-from model_utils import parse_pilecorpus, parse_lang, calculate_perplexity_sliding
+from model_utils import parse_pilecorpus, parse_lang
 from tqdm import tqdm
 from pprint import pprint
 import pandas as pd
@@ -149,7 +149,8 @@ def main(args):
     xl_model = load_model_for_causal_lm(args.model1, device)
     print("small and XL models loaded!")
     
-    ds= parse_pilecorpus(args.corpus_path)
+    # ds= parse_pilecorpus(args.corpus_path)
+    ds= parse_lang(args.corpus_path)
     print("Length:", len(ds))
     # number of tokens to generate (from paper)
     seq_len = 256
@@ -178,7 +179,7 @@ def main(args):
                 r = np.random.randint(0, len(ds))
                 # prompt = " ".join(ds[r].split()[:100])
                 prompt = " ".join(ds[r:r+100].split(" ")[1:-1])
-                
+
                 # Tokenize the prompt ensuring consistent input lengths
                 inputs = tokeniser(prompt, return_tensors="pt", max_length=input_len, truncation=True, padding="max_length")
                 if len(inputs['input_ids'][0]) == input_len:
@@ -217,7 +218,7 @@ def main(args):
                 zlib_entropy = len(zlib.compress(bytes(text, 'utf-8')))
 
                 # Calculate minimum perplexity of GPT2-XL across any sliding window of 50 tokens
-                perplexity_xl_window = calculate_perplexity(text.lower(), xl_model, tokeniser, device)
+                perplexity_xl_window = calculate_perplexity_sliding(text.lower(), xl_model, tokeniser, device)
 
                 generated_samples.append(text)
                 scores["XL"].append(perplexity_xl.cpu())
