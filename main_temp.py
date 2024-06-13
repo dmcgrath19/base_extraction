@@ -11,7 +11,7 @@ from model_utils import DecayingTemperatureWarper, calculate_perplexity_sliding,
 from datasets import load_dataset
 from transformers import GPTNeoXForCausalLM, AutoTokenizer
 from transformers.generation.logits_process import LogitsProcessor, LogitsProcessorList
-# from transformers.generation.logits_process import LogitsProcessor, LogitsProcessorList
+# from transformers.generation_logits_process import LogitsProcessor, LogitsProcessorList
 
 from tqdm import tqdm
 

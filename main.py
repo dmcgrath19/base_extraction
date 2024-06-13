@@ -5,7 +5,7 @@ import math
 import torch
 import zlib
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from transformers.generation_logits_process import LogitsProcessor, LogitsProcessorList
+from transformers.generation.logits_process import LogitsProcessor, LogitsProcessorList
 from collections import defaultdict
 from model_utils import parse_pilecorpus, parse_lang
 from tqdm import tqdm
