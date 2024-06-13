@@ -195,9 +195,9 @@ def main(args):
             
             # Batched sequence generation
             generated_sequences = xl_model.generate(
-                input_ids = inputs.input_ids,
-                attention_mask = inputs.attention_mask,
-                max_length = seq_len,
+                input_ids = inputs['input_ids'].to(device),
+                attention_mask = inputs['attention_mask'].to(device),
+                max_length = input_len+ seq_len,
                 do_sample = True, 
                 logits_processor = logits_warper,
                 renormalize_logits = True
