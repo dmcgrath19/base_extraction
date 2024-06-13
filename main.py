@@ -5,7 +5,6 @@ import math
 import torch
 import zlib
 from transformers import AutoTokenizer, AutoModelForCausalLM
-# from transformers.generation.logits_process import LogitsProcessor, LogitsProcessorList
 from transformers.generation_logits_process import LogitsProcessor, LogitsProcessorList
 from collections import defaultdict
 from model_utils import parse_pilecorpus, parse_lang
@@ -308,10 +307,10 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--N', default=20, type=int, help='Number of samples to generate')
-    parser.add_argument('--batch_size', default=6, type=int, help='Batch size')
+    parser.add_argument('--batch-size', default=6, type=int, help='Batch size')
     parser.add_argument('--model1', type=str, required=True, help="Hugging Face model name for the large, first model")
     parser.add_argument('--model2', type=str, required=True, help="Hugging Face model name for the small, second model")
-    parser.add_argument('--corpus_path', type=str, required=True, help="Path to the corpus dataset")
+    parser.add_argument('--corpus-path', type=str, required=True, help="Path to the corpus dataset")
     parser.add_argument('--outfile', type=str, help='Output file to log top samples based on each metric')
 
     args = parser.parse_args()
