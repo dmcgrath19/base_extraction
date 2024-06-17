@@ -8,8 +8,12 @@
 #$ -pe sharedmem 16
 #$ -l h_vmem=4G
 #$ -l h_rt=48:00:00
+#$ -m bea -M UUN@ed.ac.uk  
 
-# Create / activate conda env if it doesn't exist
+#Make sure these are in your eddie scratch space
+export HF_HOME="/exports/eddie/scratch/s2558433/huggingface_cache"
+export TRANSFORMERS_CACHE="/exports/eddie/scratch/s2558433/huggingface_cache/transformers"
+export HF_DATASETS_CACHE="/exports/eddie/scratch/s2558433/huggingface_cache/datasets"
 
 source /exports/eddie/scratch/UUN/miniconda3/etc/profile.d/conda.sh
 
