@@ -11,19 +11,20 @@
 #$ -m bea -M UUN@ed.ac.uk  
 
 #Make sure these are in your eddie scratch space
-export HF_HOME="/exports/eddie/scratch/s2558433/huggingface_cache"
-export TRANSFORMERS_CACHE="/exports/eddie/scratch/s2558433/huggingface_cache/transformers"
-export HF_DATASETS_CACHE="/exports/eddie/scratch/s2558433/huggingface_cache/datasets"
+export HF_HOME="/exports/eddie/scratch/s2558433/.cache/huggingface_cache"
+export TRANSFORMERS_CACHE="/exports/eddie/scratch/s2558433/.cache/huggingface_cache/transformers"
+export HF_DATASETS_CACHE="/exports/eddie/scratch/s2558433/.cache/huggingface_cache/datasets"
+export PIP_CACHE_DIR="/exports/eddie/scratch/s2558433/.cache/pip"
+export CONDA_PKGS_DIRS="/exports/eddie/scratch/s2558433/.cache/conda_pkgs"
 
-source /exports/eddie/scratch/UUN/miniconda3/etc/profile.d/conda.sh
 
-cd /exports/eddie/scratch/UUN/
-#conda remove --name extract --all
+source /exports/eddie/scratch/s2558433/miniconda3/etc/profile.d/conda.sh
 
-conda create -n extract python=3.9 
+cd /exports/eddie/scratch/s2558433/
+#conda create -n extracted python=3.9 
+
+conda create -n extract_suffix python=3.9 
 conda activate extract
-
-#git clone https://github.com/dmcgrath19/base_extraction.git
 
 cd base_extraction
 
