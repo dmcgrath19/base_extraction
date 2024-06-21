@@ -4,3 +4,4 @@ Results/*
 *.csv
 *.err
 *.sh
+*.conda
